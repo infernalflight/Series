@@ -11,6 +11,8 @@ class MainController extends AbstractController
     #[Route('/main', name: 'app_main')]
     public function index(): JsonResponse
     {
+
+
         return $this->json([
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/MainController.php',

@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Serie{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {% block stylesheets %}
-            <link rel="stylesheets" href="{{ asset('css/app.css') }}">
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Series !{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&family=Sedgwick+Ave+Display&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="icon" href="{{ asset('img/icon.png') }}">
 
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-    <body>
-    <h1>Series</h1>
+</head>
+<body>
+<div class="container">
+    <header>
+        <a href="{{ path('home') }}">
+            <img src="{{ asset("img/logo.svg") }}" alt="Series !">
+        </a>
         <nav>
             <ul>
                 <li><a href="{{ path("home") }}" title="Home">Home</a></li>
@@ -20,6 +25,16 @@
                 <li><a href="{{ path("serie_create") }}" title="Create a new serie">Create</a></li>
             </ul>
         </nav>
+    </header>
+    <main>
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <footer>
+
+    </footer>
+</div>
+{% block extraStyles %} {% endblock %}
+{% block extraJs %} {% endblock %}
+</body>
 </html>

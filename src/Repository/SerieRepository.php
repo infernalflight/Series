@@ -4,7 +4,11 @@ namespace App\Repository;
 
 use App\Entity\Serie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @extends ServiceEntityRepository<Serie>
@@ -16,19 +20,55 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SerieRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    public function __construct(ManagerRegistry $registry,
+         private EntityManagerInterface $em,
+         private ContainerBag $parameterBag
+    )
     {
         parent::__construct($registry, Serie::class);
     }
 
     public function findBestSeries(int $popularity): array
     {
+
+        /**
+         * En DQL
+         *
+        $dql = "SELECT s FROM App\Entity\Serie AS s
+            WHERE s.popularity > :popularity";
+
+        return $this->em->createQuery($dql)
+            ->setParameter(':popularity', $popularity)
+            ->execute();
+        **/
+
         return $this->createQueryBuilder('s')
             ->addOrderBy("s.popularity", "DESC")
+            ->addOrderBy("s.vote", "DESC")
             ->andWhere("s.popularity > :popularity")
             ->setParameter(':popularity', $popularity)
             ->getQuery()
             ->getResult();
+
+    }
+
+    public function findSeriesWithPagination(int $page = 1)
+    {
+
+        $limit = $this->parameterBag->get('video_nombre_par_page');
+
+        $qb = $this->createQueryBuilder('s')
+            ->addOrderBy("s.popularity", "DESC")
+            ->setMaxResults($limit);
+
+        $offset = $limit * ($page) -1;
+
+        $qb->setFirstResult($offset);
+
+        $query = $qb->getQuery();
+
+        return new Paginator($query);
     }
 
 

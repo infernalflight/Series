@@ -1,8 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | Details{% endblock %}
+{% block extraStyles %}
+    <style>
+        body {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9)),
+            url("{{ asset("uploads/backdrops/" ~ serie.backdrop) }}");
+        }
+    </style>
+{% endblock %}
+
+{% block title %}
+    Detail
+{% endblock %}
+
 
 {% block body %}
-<h2>Details d'une Série</h2>
+    <h2>Detail of the serie : {{ serie.name }}</h2>
+
+    <div class="serie-details">
+        <img src="{{ asset("uploads/posters/series/" ~ serie.poster) }}" alt="{{ serie.name }}">
+
+        <div class="serie-detail-infos">
+            <div class="flex_div">
+                <a class="link_button" href="{{ path('serie_edit', {'id': serie.id}) }}">Edit</a>
+                &nbsp;
+                <a class="link_button" href="{{ path('serie_delete', {'id': serie.id}) }}" onclick="return confirm('Etes vous sûr ??')">Delete</a>
+            </div>
+            <h3>{{ serie.name }}</h3>
+            <div>User ratings : {{ serie.vote }}</div>
+            <div>Genres : {{ serie.genres }}</div>
+            <div>Status : {{ serie.status }}</div>
+            <div>Aired from {{ serie.firstAirDate | date('Y-m-d') }} to {{ serie.lastAirDate | date('Y-m-d') }}</div>
+            <p>{{ serie.overview | nl2br }}</p>
+        </div>
+    </div>
 
 {% endblock %}

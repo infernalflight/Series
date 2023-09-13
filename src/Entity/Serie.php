@@ -5,19 +5,28 @@ namespace App\Entity;
 use App\Repository\SerieRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 class Serie
 {
+    public function __construct()
+    {
+        $this->dateCreated = new \DateTime();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom doit etre rempli')]
     private ?string $name = null;
     
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(min: 3, minMessage: "Ce commentaire doit faire au moins {{ limit }} caractères")]
+    #[Assert\Length(max: 1000, maxMessage: "Ce commentaire doit faire au max {{ limit }} caractères")]
     private ?string $overview = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -27,6 +36,7 @@ class Serie
     private ?string $popularity = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1, nullable: true)]
+    #[Assert\Range(min: 0, max: 10, notInRangeMessage: "Votre vote doit etre compris entre {{ min }} et {{ max }}")]
     private ?string $vote = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -63,7 +73,7 @@ class Serie
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
 

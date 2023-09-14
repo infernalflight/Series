@@ -137,5 +137,6 @@ class SerieType extends AbstractType
                 ]
             ]);
         }
+
     }
 }

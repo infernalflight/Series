@@ -76,6 +76,7 @@ class SerieController extends AbstractController
         $serieForm->handleRequest($request);
 
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
+            //$serie->setDateModified(new \DateTime());
             $em->persist($serie);
             $em->flush();
 

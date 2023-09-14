@@ -2,22 +2,22 @@
 
 namespace App\Entity;
 
+use App\EventListener\SerieListener;
 use App\Repository\SerieRepository;
 use App\Validator\SerieValidator;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\EntityListeners;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 #[UniqueEntity(fields: ['name', 'firstAirDate'], errorPath:'name', message:'Ce nom et cette date de lancement existent déja')]
 #[Assert\Callback([SerieValidator::class, 'validate'])]
+#[EntityListeners([SerieListener::class])]
+#[ORM\HasLifecycleCallbacks]
 class Serie
 {
-    public function __construct()
-    {
-        $this->dateCreated = new \DateTime();
-    }
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -210,9 +210,10 @@ class Serie
         return $this->dateCreated;
     }
 
-    public function setDateCreated(\DateTimeInterface $dateCreated): static
+    #[ORM\PrePersist]
+    public function setDateCreated(): static
     {
-        $this->dateCreated = $dateCreated;
+        $this->dateCreated = new \DateTime();
 
         return $this;
     }
@@ -222,9 +223,10 @@ class Serie
         return $this->dateModified;
     }
 
-    public function setDateModified(?\DateTimeInterface $dateModified): static
+    #[Orm\PreUpdate]
+    public function setDateModified(): static
     {
-        $this->dateModified = $dateModified;
+        $this->dateModified = new \DateTime();
 
         return $this;
     }

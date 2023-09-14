@@ -58,7 +58,7 @@ class SerieRepository extends ServiceEntityRepository
             $q->andWhere($expr->orX($cond1, $cond2))
             ->setParameter(':min', 3)
             ->setParameter(':max', 25)
-            ->setParameter(':name', 'e');
+            ->setParameter(':name', '%e%');
 
             return $q->getQuery()
             ->getResult();

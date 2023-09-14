@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SerieType extends AbstractType
@@ -77,14 +79,6 @@ class SerieType extends AbstractType
                     'class' => 'input-group mb-3'
                 ]
             ])
-            ->add('lastAirDate', DateType::class, [
-                'required' => false,
-                'html5' => true,
-                'widget' => 'single_text',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
-            ])
             ->add('backdrop', HiddenType::class, [
                 'required' => false
             ])
@@ -98,13 +92,27 @@ class SerieType extends AbstractType
                     'class' => 'input-group mb-3'
                 ]
             ])
-            ->add('tmdbId', TextType::class, [
-                'required' => false,
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
-            ])
-            ->add('submit', SubmitType::class);
+            ->add('submit', SubmitType::class)
+            ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event): void {
+                $form = $event->getForm();
+                $serie = $event->getData();
+
+                if (\in_array($serie['status'], ['ended', 'Canceled'])) {
+                    $form->add('lastAirDate', DateType::class, [
+                        'required' => false,
+                        'html5' => true,
+                        'widget' => 'single_text',
+                        'row_attr' => [
+                            'class' => 'input-group mb-3'
+                        ]
+                    ]);
+                } else {
+                    unset($serie['lastAirDate']);
+                    $event->setData($serie);
+                }
+            })
+            ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData'] )
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -112,5 +120,22 @@ class SerieType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Serie::class,
         ]);
+    }
+
+    public function onPreSetData(FormEvent $event): void
+    {
+        $form = $event->getForm();
+        $serie = $event->getData();
+
+        if (\in_array($serie->getStatus(), ['ended', 'Canceled'])) {
+            $form->add('lastAirDate', DateType::class, [
+                'required' => false,
+                'html5' => true,
+                'widget' => 'single_text',
+                'row_attr' => [
+                    'class' => 'input-group mb-3'
+                ]
+            ]);
+        }
     }
 }

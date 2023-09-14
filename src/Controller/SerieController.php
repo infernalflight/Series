@@ -7,9 +7,11 @@ use App\Form\SerieType;
 use App\Repository\SerieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/series', name: 'serie')]
 class SerieController extends AbstractController
@@ -69,7 +71,7 @@ class SerieController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
-    public function edit(Serie $serie, Request $request, EntityManagerInterface $em): Response
+    public function edit(Serie $serie, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $serieForm = $this->createForm(SerieType::class, $serie);
 
@@ -78,6 +80,16 @@ class SerieController extends AbstractController
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             // on passe plutôt par un entityListener
             //$serie->setDateModified(new \DateTime());
+            $backdropFile = $serieForm->get('backdrop_file')->getData();
+
+            if (!empty($backdropFile) && $backdropFile instanceof UploadedFile) {
+                $newFileName = $slugger->slug($serie->getName()) . '_' . uniqid() . '.' . $backdropFile->guessExtension();
+                if ($backdropFile->move($this->getParameter('uploads_dir'). '/backdrops', $newFileName)) {
+                    unlink($this->getParameter('uploads_dir'). '/backdrops/'.$serie->getBackdrop());
+                    $serie->setBackdrop($newFileName);
+                }
+            }
+
             $em->persist($serie);
             $em->flush();
 

@@ -6,6 +6,8 @@ use App\Entity\Serie;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -83,11 +85,12 @@ class SerieType extends AbstractType
                     'class' => 'input-group mb-3'
                 ]
             ])
-            ->add('backdrop', TextType::class, [
-                'required' => false,
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+            ->add('backdrop', HiddenType::class, [
+                'required' => false
+            ])
+            ->add('backdrop_file', FileType::class, [
+                'mapped' => false,
+                'required' => false
             ])
             ->add('poster', TextType::class, [
                 'required' => false,
@@ -101,8 +104,7 @@ class SerieType extends AbstractType
                     'class' => 'input-group mb-3'
                 ]
             ])
-            ->add('submit', SubmitType::class)
-        ;
+            ->add('submit', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

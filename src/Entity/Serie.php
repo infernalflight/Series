@@ -3,11 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\SerieRepository;
+use App\Validator\SerieValidator;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
+#[UniqueEntity(fields: ['name', 'firstAirDate'], errorPath:'name', message:'Ce nom et cette date de lancement existent déja')]
+#[Assert\Callback([SerieValidator::class, 'validate'])]
 class Serie
 {
     public function __construct()
@@ -20,7 +24,7 @@ class Serie
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: 'Le nom doit etre rempli')]
     private ?string $name = null;
     
@@ -43,6 +47,7 @@ class Serie
     private ?string $genres = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\LessThan(propertyPath: 'lastAirDate')]
     private ?\DateTimeInterface $firstAirDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]

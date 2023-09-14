@@ -18,11 +18,11 @@ class SerieController extends AbstractController
     #[Route('/list/{page}', name: '_list', defaults: ['page' => 1])]
     public function list(SerieRepository $serieRepository, int $page = 1): Response
     {
-        //$series = $serieRepository->findBestSeries(60);
+        $series = $serieRepository->findBestSeries(60);
 
         $nbVideos = $this->getParameter('video_nombre_par_page');
 
-        $series = $serieRepository->findSeriesWithPagination($page, $nbVideos);
+       // $series = $serieRepository->findSeriesWithPagination($page, $nbVideos);
 
         $maxPage = ceil($serieRepository->count([]) / $nbVideos);
 

@@ -29,9 +29,9 @@
         </nav>
     </header>
     <main>
-        {% for label, flashes in app.session.flashbag.all %}
-            {% for flash  in flashes %}
-                <div class="alert alert-{{ label }}">{{ flash }}</div>
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}"> {{ message }} </div>
             {% endfor %}
         {% endfor %}
         {% block body %}{% endblock %}

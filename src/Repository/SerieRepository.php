@@ -43,12 +43,24 @@ class SerieRepository extends ServiceEntityRepository
             ->execute();
         **/
 
-        return $this->createQueryBuilder('s')
-            ->addOrderBy("s.popularity", "DESC")
+        $q = $this->createQueryBuilder('s');
+
+            $q->addOrderBy("s.popularity", "DESC")
             ->addOrderBy("s.vote", "DESC")
             ->andWhere("s.popularity > :popularity")
-            ->setParameter(':popularity', $popularity)
-            ->getQuery()
+            ->setParameter(':popularity', $popularity);
+
+            $expr = $q->expr();
+
+            $cond1 = $expr->between('s.vote', ':min', ':max');
+            $cond2 = $expr->like('s.name', ':name');
+
+            $q->andWhere($expr->orX($cond1, $cond2))
+            ->setParameter(':min', 3)
+            ->setParameter(':max', 25)
+            ->setParameter(':name', 'e');
+
+            return $q->getQuery()
             ->getResult();
 
     }

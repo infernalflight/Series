@@ -34,5 +34,23 @@
             <p>{{ serie.overview | nl2br }}</p>
         </div>
     </div>
+    <div class="seasons">
+        <h3>Seasons</h3>
+
+        {% for season in serie.seasons %}
+            <article>
+                <img src="{{ asset("uploads/posters/seasons/" ~ season.poster) }}"
+                     alt="{{ serie.name }} | {{ season.number }}">
+                <div>
+                    <h4>Season #{{ season.number }}</h4>
+                    <p>First air date : {{ season.firstAirDate | date('Y-m-d') }}</p>
+                    <p>{{ season.overview }}</p>
+                </div>
+            </article>
+        {% else %}
+            <div>No seasons !</div>
+        {% endfor %}
+    </div>
+
 
 {% endblock %}

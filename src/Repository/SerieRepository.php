@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Serie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\CountWalker;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
@@ -29,6 +30,8 @@ class SerieRepository extends ServiceEntityRepository
         parent::__construct($registry, Serie::class);
     }
 
+
+
     public function findBestSeries(int $popularity): array
     {
 
@@ -45,10 +48,13 @@ class SerieRepository extends ServiceEntityRepository
 
         $q = $this->createQueryBuilder('s');
 
-            $q->addOrderBy("s.popularity", "DESC")
+            $q->addSelect('seasons')
+            ->addOrderBy("s.popularity", "DESC")
             ->addOrderBy("s.vote", "DESC")
             ->andWhere("s.popularity > :popularity")
-            ->setParameter(':popularity', $popularity);
+            ->setParameter(':popularity', $popularity)
+            ->leftJoin('s.seasons', 'seasons')
+            ->setMaxResults(24);
 
             $expr = $q->expr();
 
@@ -71,6 +77,8 @@ class SerieRepository extends ServiceEntityRepository
         $limit = $this->parameterBag->get('video_nombre_par_page');
 
         $qb = $this->createQueryBuilder('s')
+            ->addSelect('seasons')
+            ->leftJoin('s.seasons', 'seasons')
             ->addOrderBy("s.popularity", "DESC")
             ->setMaxResults($limit);
 
@@ -78,9 +86,14 @@ class SerieRepository extends ServiceEntityRepository
 
         $qb->setFirstResult($offset);
 
-        $query = $qb->getQuery();
+        $query = $qb->getQuery()
+            ->setHint(CountWalker::HINT_DISTINCT, true)
+        ;
 
-        return new Paginator($query);
+        $paginator = new Paginator($query);
+        $paginator->setUseOutputWalkers(false);
+
+        return $paginator;
     }
 
 

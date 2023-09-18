@@ -21,9 +21,16 @@
         <nav>
             <ul>
                 <li><a href="{{ path("home") }}" title="Home">Home</a></li>
-                <li><a href="{{ path("serie_list") }}" title="All series">Series</a></li>
-                <li><a href="{{ path("serie_create") }}" title="Create a new serie">Create</a></li>
-                <li><a href="{{ path("season_create") }}" title="Create a new season">Create season</a>
+                {% if is_granted('IS_AUTHENTICATED') %}
+                    <li><a href="{{ path("serie_list") }}" title="All series">Series</a></li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="{{ path("serie_create") }}" title="Create a new serie">Create</a></li>
+                            <li><a href="{{ path("season_create") }}" title="Create a new season">Create season</a>
+                        {% endif %}
+                    <li><a href="{{ path('app_logout') }}" title="Connexion">Déconnexion</a></li>
+                {% else%}
+                     <li><a href="{{ path('app_login') }}" title="Connexion">Connexion</a></li>
+                 {% endif %}
             </ul>
         </nav>
     </header>

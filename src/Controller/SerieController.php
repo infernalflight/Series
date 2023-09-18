@@ -13,16 +13,18 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/series', name: 'serie')]
+#[IsGranted('ROLE_USER')]
 class SerieController extends AbstractController
 {
 
     #[Route('/list/{page}', name: '_list', defaults: ['page' => 1])]
     public function list(SerieRepository $serieRepository, int $page = 1): Response
     {
-        $series = $serieRepository->findSeriesWithPagination();
+        $series = $serieRepository->findSeriesWithPagination($page);
 
         $nbVideos = $this->getParameter('video_nombre_par_page');
 
@@ -51,6 +53,7 @@ class SerieController extends AbstractController
     }
 
     #[Route('/create', name: '_create')]
+    #[IsGranted('ROLE_ADMIN')]
     public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $serie = new Serie();

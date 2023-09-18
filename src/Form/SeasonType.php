@@ -17,16 +17,16 @@ class SeasonType extends AbstractType
     {
         $builder
             ->add('number')
-            ->add('firstAirDate')
-            ->add('overview')
-            ->add('poster')
-            ->add('tmdbId')
             ->add('serie', EntityType::class, [
                 'class' => Serie::class,
                 'choice_label' => 'name',
                 'query_builder' => function(SerieRepository $serieRepository) {
                     return $serieRepository->createQueryBuilder("s")->addOrderBy('s.name');
                 }
+            ])
+            ->add('included_fields', IncludedType::class, [
+                'label' => false,
+                'inherit_data' => true
             ])
             ->add('submit', SubmitType::class)
         ;

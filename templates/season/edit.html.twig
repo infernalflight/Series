@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Edit{% endblock %}
+
+{% block body %}
+    {% if id is defined %}
+        <h2>Editer cette Saison</h2>
+    {% else %}
+        <h2>Créer une Nouvelle Saison</h2>
+    {% endif %}
+
+    {{ form_start(form) }}
+
+    {{ form_label(form) }}
+    {{ form_errors(form) }}
+    {{ form_widget(form) }}
+
+    {{ form_end(form) }}
+{% endblock %}

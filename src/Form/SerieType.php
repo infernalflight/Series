@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Serie;
-use Composer\Semver\Constraint\Constraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -16,7 +15,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SerieType extends AbstractType
 {
@@ -71,6 +69,25 @@ class SerieType extends AbstractType
                 'required' => false
             ])
             ->add('backdrop_file', FileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => "Ce format n'est pas ok",
+                        'maxSizeMessage' => "Ce fichier est trop lourd"
+                    ])
+                ]
+            ])
+            ->add('poster', HiddenType::class, [
+                'required' => false
+            ])
+            ->add('poster_file', FileType::class, [
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [

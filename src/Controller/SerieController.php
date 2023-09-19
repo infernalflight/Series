@@ -4,17 +4,16 @@ namespace App\Controller;
 
 use App\Entity\Serie;
 use App\Form\SerieType;
+use App\Helper\Uploader;
 use App\Repository\SerieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/series', name: 'serie')]
 #[IsGranted('ROLE_USER')]
@@ -54,7 +53,7 @@ class SerieController extends AbstractController
 
     #[Route('/create', name: '_create')]
     #[IsGranted('ROLE_ADMIN')]
-    public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function create(Request $request, EntityManagerInterface $em, Uploader $uploader, TranslatorInterface $translator): Response
     {
         $serie = new Serie();
         $serieForm = $this->createForm(SerieType::class, $serie);
@@ -62,7 +61,18 @@ class SerieController extends AbstractController
         $serieForm->handleRequest($request);
 
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
-            $serie = $this->uploadFile($slugger, $serie, $serieForm);
+
+            if ($serieForm->get('backdrop_file')->getData() instanceof UploadedFile) {
+                $backdropFile = $serieForm->get('backdrop_file')->getData();
+                $backdropPath = $uploader->upload($backdropFile, $this->getParameter('backdrop_dir'), $serie->getName());
+                $serie->setBackdrop($backdropPath);
+            }
+
+            if ($serieForm->get('poster_file')->getData() instanceof UploadedFile) {
+                $posterFile = $serieForm->get('poster_file')->getData();
+                $posterPath = $uploader->upload($posterFile, $this->getParameter('poster_dir'), $serie->getName());
+                $serie->setPoster($posterPath);
+            }
 
             $em->persist($serie);
             $em->flush();
@@ -78,10 +88,10 @@ class SerieController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
-    public function edit(Serie $serie, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function edit(Serie $serie, Request $request, EntityManagerInterface $em, Uploader $uploader): Response
     {
         // Equivalent d'un attribute 'IsGranted()'
-        $this->denyAccessUnlessGranted(['ROLE_ADMIN'], null,'Il faut etre un admin');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null,'Il faut etre un admin');
 
         $serieForm = $this->createForm(SerieType::class, $serie);
 
@@ -89,8 +99,23 @@ class SerieController extends AbstractController
 
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             // on passe plutôt par un entityListener
-            //$serie->setDateModified(new \DateTime());
-            $serie = $this->uploadFile($slugger, $serie, $serieForm);
+
+            if ($serieForm->get('backdrop_file')->getData() instanceof UploadedFile) {
+                $backdropFile = $serieForm->get('backdrop_file')->getData();
+                $backdropPath = $uploader->upload(
+                    $backdropFile,
+                    $this->getParameter('backdrop_dir'),
+                    $serie->getName(),
+                    $serie->getBackdrop()
+                );
+                $serie->setBackdrop($backdropPath);
+            }
+
+            if ($serieForm->get('poster_file')->getData() instanceof UploadedFile) {
+                $posterFile = $serieForm->get('poster_file')->getData();
+                $posterPath = $uploader->upload($posterFile, $this->getParameter('poster_dir'), $serie->getName(), $serie->getPoster());
+                $serie->setPoster($posterPath);
+            }
 
             $em->persist($serie);
             $em->flush();
@@ -117,22 +142,4 @@ class SerieController extends AbstractController
         return $this->redirectToRoute('serie_list');
 
     }
-
-    private function uploadFile(SluggerInterface $slugger, Serie $serie, FormInterface $serieForm): Serie
-    {
-        $backdropFile = $serieForm->get('backdrop_file')->getData();
-
-        if (!empty($backdropFile) && $backdropFile instanceof UploadedFile) {
-            $newFileName = $slugger->slug($serie->getName()) . '_' . uniqid() . '.' . $backdropFile->guessExtension();
-            if ($backdropFile->move($this->getParameter('uploads_dir'). 'backdrops', $newFileName)) {
-                if ($serie->getBackdrop() && \file_exists($this->getParameter('uploads_dir'). 'backdrops/'.$serie->getBackdrop())) {
-                    unlink($this->getParameter('uploads_dir'). 'backdrops/'.$serie->getBackdrop());
-                }
-                $serie->setBackdrop($newFileName);
-            }
-        }
-
-        return $serie;
-    }
-
 }

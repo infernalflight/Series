@@ -6,6 +6,8 @@
 parameters:
     video_nombre_par_page: 24
     uploads_dir: 'uploads/'
+    backdrop_dir: '%uploads_dir%backdrops/'
+    poster_dir: '%uploads_dir%posters/series/'
 services:
     # default configuration for services in *this* file
     _defaults:

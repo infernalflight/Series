@@ -26,6 +26,9 @@ security:
                 lifetime: 604800
                 path: /
                 always_remember_me: true
+            login_throttling:
+                max_attempts: 3
+                interval: '3 minutes'
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER, ROLE_AUTEUR]
         ROLE_AUTEUR: [ROLE_USER]

@@ -80,6 +80,9 @@ class SerieController extends AbstractController
     #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
     public function edit(Serie $serie, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
+        // Equivalent d'un attribute 'IsGranted()'
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN'], null,'Il faut etre un admin');
+
         $serieForm = $this->createForm(SerieType::class, $serie);
 
         $serieForm->handleRequest($request);

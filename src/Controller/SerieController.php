@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/series', name: 'serie')]
+#[Route('/{_locale}/series', name: 'serie')]
 #[IsGranted('ROLE_USER')]
 class SerieController extends AbstractController
 {
@@ -52,6 +52,9 @@ class SerieController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function create(Request $request, EntityManagerInterface $em, Uploader $uploader, TranslatorInterface $translator): Response
     {
+
+        dd($translator->trans('entity.validator.serie.unique_entity'));
+
         $serie = new Serie();
         $serieForm = $this->createForm(SerieType::class, $serie);
 

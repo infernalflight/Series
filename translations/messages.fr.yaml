@@ -1,0 +1,11 @@
+nav:
+  home: 'Accueil'
+  series: 'Séries'
+  create: 'Créer'
+entity:
+  validator:
+    serie:
+      unique_entity: 'Ce nom et cette date de lancement existent déja'
+serie:
+  label:
+    name: 'Nom'

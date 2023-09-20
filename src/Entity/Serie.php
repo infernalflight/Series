@@ -14,7 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
-#[UniqueEntity(fields: ['name', 'firstAirDate'], errorPath:'name', message:'Ce nom et cette date de lancement existent déja')]
+#[UniqueEntity(fields: ['name', 'firstAirDate'], errorPath:'name', message: "entity.validator.serie.unique_entity")]
 #[Assert\Callback([SerieValidator::class, 'validate'])]
 #[EntityListeners([SerieListener::class])]
 #[ORM\HasLifecycleCallbacks]

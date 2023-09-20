@@ -8,6 +8,7 @@ parameters:
     uploads_dir: 'uploads/'
     backdrop_dir: '%uploads_dir%backdrops/'
     poster_dir: '%uploads_dir%posters/series/'
+    app.supported_locales: 'en|fr'
 services:
     # default configuration for services in *this* file
     _defaults:

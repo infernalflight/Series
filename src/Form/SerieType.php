@@ -22,7 +22,7 @@ class SerieType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => "Nom de la Série",
+                'label' => "serie.label.name",
                 'row_attr' => [
                     'class' => 'input-group mb-3'
                 ]

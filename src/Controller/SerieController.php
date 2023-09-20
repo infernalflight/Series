@@ -31,7 +31,6 @@ class SerieController extends AbstractController
 
         $maxPage = ceil($serieRepository->count([]) / $nbVideos);
 
-        //TODO Requeter les Séries en DB
         return $this->render('serie/list.html.twig', [
             'series' => $series,
             'currentPage' => $page,
@@ -44,7 +43,6 @@ class SerieController extends AbstractController
     {
         $serie = $serieRepository->find($id);
 
-        //TODO Requeter la Serie en DB
         return $this->render('serie/details.html.twig', [
             'serie' => $serie
         ]);

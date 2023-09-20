@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | Error {{ exception.statusCode }}{% endblock %}
+
+{% block body %}
+    <h3>Vous n'avez pas l'accès à cette ressource</h3>
+    <p>{{ exception.message }}</p>
+{% endblock %}

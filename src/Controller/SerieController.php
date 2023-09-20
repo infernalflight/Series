@@ -44,7 +44,6 @@ class SerieController extends AbstractController
     {
         $serie = $serieRepository->find($id);
 
-
         //TODO Requeter la Serie en DB
         return $this->render('serie/details.html.twig', [
             'serie' => $serie
@@ -132,6 +131,7 @@ class SerieController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
+    #[IsGranted('SERIE_DELETE', "serie", "Pas le droit!")]
     public function delete(Serie $serie, EntityManagerInterface $em): Response
     {
         $em->remove($serie);

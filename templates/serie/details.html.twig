@@ -28,7 +28,10 @@
             </div>
             <h3>{{ serie.name }}</h3>
             <div>User ratings : {{ serie.vote }}</div>
-            <div>Genres : {{ serie.genres }}</div>
+            {# Genre filtré par un filtre de TwigExtension #}
+            <div>Genres : {{ serie.genres|displayToBadge }}</div>
+            {# Genre filtré par une fonction de TwigExtension : possibilité de passer n paramètres #}
+            <div>Genres : {{ displayToBadge(serie.genres) }}</div>
             <div>Status : {{ serie.status }}</div>
             <div>Aired from {{ serie.firstAirDate | date('Y-m-d') }} to {{ serie.lastAirDate | date('Y-m-d') }}</div>
             <p>{{ serie.overview | nl2br }}</p>

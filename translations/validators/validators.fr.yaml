@@ -1,0 +1,4 @@
+entity:
+  validator:
+    serie:
+      unique_entity: 'Ce nom et cette date de lancement existent déja'

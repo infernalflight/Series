@@ -1,0 +1,19 @@
+nav:
+  home: 'Accueil'
+  series: 'Séries'
+  create: 'Créer'
+serie:
+  label:
+    name: 'Nom'
+Create a new season: "Créer une nouvelle %numero% saison"
+series.nb: >-
+  {serie_count, plural,
+    =0 {Il n y a aucune série et }
+    =1 {Il y a une série et }
+    other {Il y a # séries et }
+  }
+  {season_count, plural,
+    =0 {il n y a aucune saison}
+    =1 {il y a une saison}
+    other {il y a # saisons}
+  }

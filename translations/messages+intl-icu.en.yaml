@@ -1,0 +1,6 @@
+nav.home: Home
+nav.series: Series
+nav.create: Create
+entity.validator.serie.unique_entity: 'This name with this first air date already exists'
+serie.label.name: Name
+'Create a new season': '__Create a new season'

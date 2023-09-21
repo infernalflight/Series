@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\EventListener\SerieListener;
 use App\Repository\SerieRepository;
 use App\Validator\SerieValidator;
@@ -11,6 +14,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\EntityListeners;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
@@ -18,9 +22,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Assert\Callback([SerieValidator::class, 'validate'])]
 #[EntityListeners([SerieListener::class])]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/series',
+            paginationItemsPerPage: 10,
+            normalizationContext: ['groups' => 'serie:list'],
+            security: "is_granted('ROLE_ADMIN')"
+        )
+    ]
+)]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 class Serie
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -28,17 +42,20 @@ class Serie
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le nom doit etre rempli')]
+    #[Groups(['serie:list'])]
     private ?string $name = null;
     
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\Length(min: 3, minMessage: "Ce commentaire doit faire au moins {{ limit }} caractères")]
     #[Assert\Length(max: 1000, maxMessage: "Ce commentaire doit faire au max {{ limit }} caractères")]
+    #[Groups(['serie:list'])]
     private ?string $overview = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 1, nullable: true)]
+    #[Groups(['serie:list'])]
     private ?string $popularity = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1, nullable: true)]
@@ -71,6 +88,7 @@ class Serie
     private ?\DateTimeInterface $dateModified = null;
 
     #[ORM\OneToMany(mappedBy: 'serie', targetEntity: Season::class, orphanRemoval: false, cascade: ['remove'])]
+    #[Groups(['serie:list'])]
     private Collection $seasons;
 
     public function __construct()

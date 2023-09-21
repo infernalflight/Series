@@ -2,12 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SeasonRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SeasonRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource]
 class Season
 {
     #[ORM\Id]
@@ -16,12 +19,14 @@ class Season
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['serie:list'])]
     private ?int $number = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $firstAirDate = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['serie:list'])]
     private ?string $overview = null;
 
     #[ORM\Column(length: 255, nullable: true)]

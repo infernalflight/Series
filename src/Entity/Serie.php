@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
@@ -17,6 +18,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * bcxbxcbxcbxcbxcxc
+ *
+ */
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 #[UniqueEntity(fields: ['name', 'firstAirDate'], errorPath:'name', message: "entity.validator.serie.unique_entity")]
 #[Assert\Callback([SerieValidator::class, 'validate'])]
